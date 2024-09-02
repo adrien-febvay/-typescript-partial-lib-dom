@@ -75,7 +75,6 @@
     "@typescript-eslint/parser": "^8.3.0",
     "@typescript/lib-dom": "file:.",
     "changelog-safeguard": "^1.0.1",
-    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-prettier": "^9.1.0",
