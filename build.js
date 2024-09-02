@@ -13,10 +13,30 @@ function empty(path) {
   }
 }
 
+function kill(status, ...args) {
+  if (args.length) {
+    console.error(...args);
+  }
+  remove(tmpDir);
+  process.exit(status);
+}
+
 function ignoreError(fn) {
   try {
     fn()
   } catch (error) {}
+}
+
+function prepareDir(path) {
+  try {
+    fs.mkdirSync(path, { recursive: true });
+  } catch(error) {
+    if (error instanceof Error && error.code === 'EEXIST') {
+      empty(path);
+    } else {
+      throw error;
+    }
+  }
 }
 
 function processFile(tmpDir, outDir, filename, license) {
@@ -50,11 +70,23 @@ async function processFiles(tmpDir, outDir, license) {
   remove(tmpDir);
 }
 
+function readdirIfExists(path) {
+  try {
+    return fs.readdirSync(path);
+  } catch (error) {
+    if (error instanceof Error && error.code === 'ENOENT') {
+      return null;
+    } else {
+      throw error;
+    }
+  }
+}
+
 function remove(...path) {
   ignoreError(() => fs.rmSync(join(...path), { recursive: true }));
 }
 
-function resolveOutDir(tmpDir) {
+function resolveOutDir() {
   const tsconfig = json5.parse(fs.readFileSync(resolve('tsconfig.json'), 'utf-8'));
   if (!tsconfig || typeof tsconfig !== 'object' || tsconfig instanceof Array) {
     throw new Error('Invalid tsconfig.json file in project root');
@@ -67,32 +99,33 @@ function resolveOutDir(tmpDir) {
   }
 }
 
-async function tsc(tmpDir) {
+function tsc(tmpDir) {
   const npx = /^win\d+$/.test(process.platform) ? 'npx.cmd' : 'npx';
-  const { status } = cp.spawnSync(npx, ['tsc', '--outDir', tmpDir], { stdio: 'inherit' });
-  if (status) {
-    kill(status);
+  const args = ['tsc', '--outDir', tmpDir];
+  console.log('>', npx, ...args);
+  console.log();
+  const { error, status } = cp.spawnSync(npx, args, { shell: true, stdio: 'inherit' });
+  const count = readdirIfExists(tmpDir)?.length;
+  if (error) {
+    kill(500, `\x1b[31mTSC error \x1b[33m${error.code}\x1b[0m`);
+  } else if (status) {
+    kill(status, `\x1b[31mTSC exited with status \x1b[33m${status}\x1b[0m`);
+  } else if (count) {
+    const plural = count > 1 ? 's' : '';
+    console.log(`TSC generated \x1b[33m${count}\x1b[0m file${plural}`);
+  } else {
+    console.error(`\x1b[31mTSC generated no files\x1b[0m`);
   }
 }
 
-function kill(status, ...args) {
-  if (args.length) {
-    console.error(...args);
-  }
-  remove(tmpDir);
-  process.exit(status);
-}
-
-// const tmpDir = fs.mkdtempSync(join(os.tmpdir(), 'typescript-partial-lib-dom'));
-const tmpDir = join(os.tmpdir(), 'typescript-partial-lib-dom');
-fs.mkdirSync(tmpDir, { recursive: true });
-empty(tmpDir);
+const tmpDir = fs.mkdtempSync(join(os.tmpdir(), 'typescript-partial-lib-dom'));
+prepareDir(tmpDir);
 const outDir = resolveOutDir();
+prepareDir(outDir);
 tsc(tmpDir);
 const license = `/*! *****************************************************************************
 ${fs.readFileSync(resolve('LICENSE.txt'), 'utf-8').replace(/\n$/, '')}
 ***************************************************************************** */
 `;
-empty(outDir);
 processFiles(tmpDir, outDir, license).catch((error) => kill(1, error));
 
