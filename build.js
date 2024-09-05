@@ -3,14 +3,13 @@ const fs = require('fs');
 const json5 = require('json5');
 const os = require('os');
 const path = require('path');
+const { rimrafSync } = require('rimraf');
 
 const resolve = (...args) => path.resolve(__dirname, ...args);
-const join = path.join;
+const { join, sep } = path;
 
 function empty(path) {
-  for (const entry of fs.readdirSync(path)) {
-    remove(join(path, entry));
-  }
+  rimrafSync(join(path, '**', '*').split(sep).join('/'), { glob: true });
 }
 
 function kill(status, ...args) {
@@ -28,15 +27,8 @@ function ignoreError(fn) {
 }
 
 function prepareDir(path) {
-  try {
-    fs.mkdirSync(path, { recursive: true });
-  } catch(error) {
-    if (error instanceof Error && error.code === 'EEXIST') {
-      empty(path);
-    } else {
-      throw error;
-    }
-  }
+  fs.mkdirSync(path, { recursive: true });
+  empty(path);
 }
 
 function processFile(tmpDir, outDir, filename, license) {
@@ -128,4 +120,3 @@ ${fs.readFileSync(resolve('LICENSE.txt'), 'utf-8').replace(/\n$/, '')}
 ***************************************************************************** */
 `;
 processFiles(tmpDir, outDir, license).catch((error) => kill(1, error));
-
