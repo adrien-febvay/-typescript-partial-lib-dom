@@ -1,3 +1,6 @@
+# Dev
+- Fixed type conflicts and function declarations in `lib.dom.d.ts`
+
 # Version 1.0.0
 - Alternate `lib.dom.d.ts` library
 - `/globals` entry point to default brower global variables to `undefined`

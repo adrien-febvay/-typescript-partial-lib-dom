@@ -27282,8 +27282,10 @@ declare var open: undefined | ((url?: string | URL, target?: string, features?: 
  *
  * [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/postMessage)
  */
-declare var postMessage: undefined | ((message: any, targetOrigin: string, transfer?: Transferable[]) => void);
-declare var postMessage: undefined | ((message: any, options?: WindowPostMessageOptions) => void);
+declare var postMessage: undefined | {
+  (message: any, targetOrigin: string, transfer?: Transferable[]): void;
+  (message: any, options?: WindowPostMessageOptions): void;
+};
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/print) */
 declare var print: undefined | (() => void);
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/prompt) */
@@ -27301,14 +27303,20 @@ declare var resizeBy: undefined | ((x: number, y: number) => void);
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/resizeTo) */
 declare var resizeTo: undefined | ((width: number, height: number) => void);
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/scroll) */
-declare var scroll: undefined | ((options?: ScrollToOptions) => void);
-declare var scroll: undefined | ((x: number, y: number) => void);
+declare var scroll: undefined | {
+  (options?: ScrollToOptions): void;
+  (x: number, y: number): void;
+};
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/scrollBy) */
-declare var scrollBy: undefined | ((options?: ScrollToOptions) => void);
-declare var scrollBy: undefined | ((x: number, y: number) => void);
+declare var scrollBy: undefined | {
+  (options?: ScrollToOptions): void;
+  (x: number, y: number): void;
+};
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/scrollTo) */
-declare var scrollTo: undefined | ((options?: ScrollToOptions) => void);
-declare var scrollTo: undefined | ((x: number, y: number) => void);
+declare var scrollTo: undefined | {
+  (options?: ScrollToOptions): void;
+  (x: number, y: number): void;
+};
 /**
  * Cancels the document load.
  *
@@ -27825,9 +27833,7 @@ declare var origin: undefined | string;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/performance) */
 declare var performance: Performance;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/atob) */
-interface globalThis {
-  readonly atob: undefined | ((this: Window, data: string) => string);
-}
+declare function atob(this: Window | void, data: string): string;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/btoa) */
 declare function btoa(data: string): string;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearInterval) */
@@ -27835,8 +27841,10 @@ declare function clearInterval(id: number | undefined): void;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/clearTimeout) */
 declare function clearTimeout(id: number | undefined): void;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/createImageBitmap) */
-declare var createImageBitmap: undefined | ((image: ImageBitmapSource, options?: ImageBitmapOptions) => Promise<ImageBitmap>);
-declare var createImageBitmap: undefined | ((image: ImageBitmapSource, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions) => Promise<ImageBitmap>);
+declare var createImageBitmap: undefined | {
+  (image: ImageBitmapSource, options?: ImageBitmapOptions): Promise<ImageBitmap>;
+  (image: ImageBitmapSource, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions): Promise<ImageBitmap>;
+};
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/fetch) */
 declare function fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/queueMicrotask) */
@@ -27851,10 +27859,14 @@ declare function setTimeout(handler: TimerHandler, timeout?: number, ...argument
 declare function structuredClone<T = any>(value: T, options?: StructuredSerializeOptions): T;
 /** [MDN Reference](https://developer.mozilla.org/docs/Web/API/Window/sessionStorage) */
 declare var sessionStorage: undefined | Storage;
-declare var addEventListener: undefined | (<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions) => void);
-declare var addEventListener: undefined | ((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) => void);
-declare var removeEventListener: undefined | (<K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | EventListenerOptions) => void);
-declare var removeEventListener: undefined | ((type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) => void);
+declare var addEventListener: undefined | {
+  <K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+  (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+};
+declare var removeEventListener: undefined | {
+  <K extends keyof WindowEventMap>(type: K, listener: (this: Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+  (type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+};
 
 type AlgorithmIdentifier = Algorithm | string;
 type AllowSharedBufferSource = ArrayBuffer | ArrayBufferView;
@@ -28110,7 +28122,7 @@ type WorkerType = "classic" | "module";
 type WriteCommandType = "seek" | "truncate" | "write";
 type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text";
 
-type BrowserGlobals =
+type BrowserGlobalKeys =
   | 'AbstractRange'
   | 'AnalyserNode'
   | 'Animation'
@@ -28893,10 +28905,10 @@ type BrowserGlobals =
   | 'visualViewport'
   | 'webkitURL';
 
-type BrowserGlobals = {
+  type BrowserGlobals = {
   [Key in keyof typeof globalThis]: Key extends 'self' | 'window'
     ? Window & BrowserGlobals
-    : Key extends BrowserGlobals
+    : Key extends BrowserGlobalKeys
       ? Exclude<typeof globalThis[Key], undefined>
       : typeof globalThis[Key];
 };
