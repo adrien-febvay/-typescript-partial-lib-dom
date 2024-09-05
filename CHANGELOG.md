@@ -1,4 +1,4 @@
-# Dev
+# Version 1.0.1
 - Fixed type conflicts and function declarations in `lib.dom.d.ts`
 
 # Version 1.0.0
