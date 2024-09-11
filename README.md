@@ -79,6 +79,15 @@ document?.addEventListener('click', () => {
 
 However, type casting is dirty and unsafe. It is better to rely on type checking and on the utilities of this package.
 
+## Pitfalls
+
+The browser global variables will be set as eventually undefined everywhere, inluding in modules and functions that are supposed to run only on browser.
+
+As a result you may have to check them where it's technically unecessary, just to make TypeScript be sure they are defined. Alternatively you may also cast their original type on them (ie: `window as Window`).
+
+The package utilities documented below can help you by providing a `window` that is always defined.
+
+
 ## Package utilities
 
 The functions provided with the package don't do much, but they are very light-weighted and can be very convenient at times.
