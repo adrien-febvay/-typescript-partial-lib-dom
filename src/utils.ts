@@ -3,6 +3,7 @@ import type { AnyBrowserFn, BrowserFn, IfVoid, MergeReturnTypes, Shift, VoidOrUn
 import { EnvironmentError } from './EnvironmentError';
 
 export { EnvironmentError } from './EnvironmentError';
+export { AnyBrowserFn, BrowserFn } from './types';
 
 /** Does nothing and returns `undefined` (return type `void`). */
 function voidFn() {}
@@ -98,7 +99,7 @@ export function onBrowserOrWarn(fn: BrowserFn<unknown>, fallbackValue?: unknown)
  *   const getScrollY = browserFn((window, y = 0) => window.scrollY + y);
  *   const scrollYPlusOne = getScrollY(1); // Number on browser, undefined otherwise.
  *
- *   // Here then callback will be executed upon promise resolution only on a browser.
+ *   // Here then callback will be executed upon promise resolution but only on a browser.
  *   myPromise.then(browserFn(myCallback));
  * ```
  */
@@ -140,7 +141,7 @@ export function browserFnOrThrow(fn: BrowserFn<unknown>) {
 /**
  * Allows a function to be executed only on a browser (more accurately when `window` is defined).
  *
- * Sends a warning to the console when  the resulting function is called outside of a browser.
+ * Sends a warning to the console when the resulting function is called outside of a browser.
  *
  * @param fn A function to execute with `window` as its first parameter.
  * @param fallbackFn Function to use when not on browser, void function by default.
@@ -150,8 +151,8 @@ export function browserFnOrThrow(fn: BrowserFn<unknown>) {
  *   const getScrollY = browserFnOrWarn((window, y = 0) => window.scrollY + y);
  *   const scrollYPlusOne = getScrollY(1); // Number on browser, undefined otherwise.
  *
- *   // Here then callback will be executed upon promise resolution on a browser,
- *   // but otherwise will send a warning to the console and resolve to `undefined`.
+ *   // Here then callback will be executed upon promise resolution but only on a browser,
+ *   // otherwise will send a warning to the console and resolve to `undefined`.
  *   myPromise.then(browserFnOrWarn(myCallback));
  * ```
  */

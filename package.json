@@ -37,6 +37,7 @@
   ],
   "exports": {
     "./globals": "./dist/globals.js",
+    "./react": "./dist/react.js",
     "./utils": "./dist/utils.js"
   },
   "types": "./lib/dom.d.ts",
@@ -71,6 +72,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^22.5.2",
+    "@types/react": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^8.4.0",
     "@typescript-eslint/parser": "^8.4.0",
     "@typescript/lib-dom": "file:.",
@@ -84,8 +86,17 @@
     "jest-runner-eslint": "^2.2.0",
     "json5": "^2.2.3",
     "prettier": "^3.3.3",
+    "react": "^16.8.0",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.2.5",
     "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "react": ">= 16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   }
 }

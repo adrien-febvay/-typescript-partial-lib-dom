@@ -2,13 +2,14 @@
 
 ![CI Tests status](https://github.com/adrien-febvay/typescript-partial-lib-dom/actions/workflows/ci-tests.yml/badge.svg)
 
-TypeScript doesn't complain when browser global variables like `window` or `document` are used without type-proofing in projects that run on both Node and browsers, like websites with Server-Side Rendering (SSR). It can lead to unexpected crashes.
+TypeScript doesn't complain when Browser Global Variables (BGVs) like `window` or `document` are used without type-proofing in projects that run on both Node and browsers, like websites with Server-Side Rendering (SSR). It can lead to unexpected crashes.
 
 This package solves this issue by :
-* Overriding TypeScript's `lib.dom.d.ts` library to declare browser global variables as eventually `undefined`.
-* Defaults browser global variables to `undefined` to avoid reference errors when trying to access them.
+* Overriding TypeScript's `lib.dom.d.ts` library to declare BGVs as eventually `undefined`.
+* Defaulting BGVs to `undefined` to avoid reference errors when trying to access them.
+* Providing utilities to simplify access to BGVs, including utilities for React.
 
-As a bonus, it allows to write a simpler code when accessing browser global variables, since their existence doesn't have to be checked with the `typeof` operator. 
+As a bonus, it allows to write a simpler code when accessing browser global variables, since their existence doesn't have to be checked with the `typeof` operator.
 
 ## Setup
 
@@ -87,8 +88,7 @@ As a result you may have to check them where it's technically unecessary, just t
 
 The package utilities documented below can help you by providing a `window` that is always defined.
 
-
-## Package utilities
+## Basic utilities
 
 The functions provided with the package don't do much, but they are very light-weighted and can be very convenient at times.
 
@@ -120,8 +120,8 @@ Syntax: `onBrowser(your_function, fallback_value?);`<br>
 @returns the function result on a browser, otherwise the fallback value.
 
 Alternatively, you may use:
-* The `onBrowserOrWarn` function to send a warning on the console when not running on a browser.
-* The `onBrowserOrThrow` function to throw an error on the console when not running on a browser.
+* The `onBrowserOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `onBrowserOrThrow` function to throw an error when not running on a browser.
 
 ### The `browserFn` function
 
@@ -148,8 +148,62 @@ Syntax: `browserFn(your_function, fallback_function?);`<br>
 * @returns a function accordingly (without the `window` parameter).
 
 Alternatively, you may use:
-* The `browserFnOrWarn` function to send a warning on the console when not running on a browser.
-* The `browserFnOrThrow` function to throw an error on the console when not running on a browser.
+* The `browserFnOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `browserFnOrThrow` function to throw an error when not running on a browser.
+
+## React utilities
+
+### The `useBrowserCallback` function
+
+`useBrowserCallback` is an improved version of React's `useCallback`.
+
+It will return a memoized version of the callback that only changes if one of the `deps` has changed.
+
+The resulting function will be only executed on a browser (more accurately when `window` is defined).
+
+```ts
+const getScrollY = useBrowserCallback((window) => window.scrollY + y, [y]);
+const scrollYPlusOne = getScrollY(); // Number on browser, undefined otherwise.
+```
+
+Syntax: `useBrowserCallback(fn[, fallbackFn], deps)`<br>
+@param `fn` A function to execute with `window` as its first parameter.<br>
+@param `fallbackFn` Function to use when not on browser.<br>
+@param `deps` List of dependencies which will trigger a new memoization on change.<br>
+@returns A memoized version of the function.
+
+For more information on React's `useCallback` function, see https://react.dev/reference/react/useCallback.
+
+Alternatively, you may use:
+* The `useBrowserCallbackOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `useBrowserCallbackOrThrow` function to throw an error when not running on a browser.
+
+### The `useEffect` function
+
+This package's `useEffect` is an improved version of React's one.
+
+The only difference is that the effect and destruction callbacks will be provided with the `window` object,
+which is always defined in this situation because it will only be called on a browser, as their argument.
+
+```ts
+// Here `document` is always defined.
+useEffect(({ document }) => {
+  document.addEventListener('click', myCallback);
+  return () => {
+    document.removeEventListener('click', myCallback);
+  };
+});
+```
+
+Syntax: `useEffect(effect[, deps])`<br>
+@param `effect` Imperative function that can return a cleanup function.<br>
+@param `deps`If present, effect will only activate if the values in the list change.<br>
+
+For more information on React's `useEffect` function, see https://react.dev/reference/react/useEffect.
+
+Alternatively, you may use:
+* The `useInsertionEffect` to insert elements into the DOM before any layout Effects fire.
+* The `useLayoutEffect` to have the effect callback fire before the browser repaints the screen.
 
 ## More information
 
