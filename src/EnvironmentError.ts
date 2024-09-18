@@ -20,7 +20,7 @@ export class EnvironmentError extends Error {
   public static warningFn(fn: AnyBrowserFn, fallbackFn: AnyFn) {
     return (...args: unknown[]) => {
       // eslint-disable-next-line no-console
-      console.warn(new EnvironmentError(fn));
+      console.error(new EnvironmentError(fn));
       fallbackFn(...args);
     };
   }

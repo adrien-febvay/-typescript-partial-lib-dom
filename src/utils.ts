@@ -81,7 +81,7 @@ export function onBrowserOrWarn<ReturnType, FallbackValue>(
 export function onBrowserOrWarn(fn: BrowserFn<unknown>, fallbackValue?: unknown) {
   if (!window) {
     // eslint-disable-next-line no-console
-    console.warn(new EnvironmentError(fn));
+    console.error(new EnvironmentError(fn));
   }
   return window ? fn(window) : fallbackValue;
 }

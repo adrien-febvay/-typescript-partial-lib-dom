@@ -120,7 +120,7 @@ Syntax: `onBrowser(your_function, fallback_value?);`<br>
 @returns the function result on a browser, otherwise the fallback value.
 
 Alternatively, you may use:
-* The `onBrowserOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `onBrowserOrWarn` function to send a warning to the error output when not running on a browser.
 * The `onBrowserOrThrow` function to throw an error when not running on a browser.
 
 ### The `browserFn` function
@@ -148,7 +148,7 @@ Syntax: `browserFn(your_function, fallback_function?);`<br>
 * @returns a function accordingly (without the `window` parameter).
 
 Alternatively, you may use:
-* The `browserFnOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `browserFnOrWarn` function to send a warning to the error output when not running on a browser.
 * The `browserFnOrThrow` function to throw an error when not running on a browser.
 
 ## React utilities
@@ -175,7 +175,7 @@ Syntax: `useBrowserCallback(fn[, fallbackFn], deps)`<br>
 For more information on React's `useCallback` function, see https://react.dev/reference/react/useCallback.
 
 Alternatively, you may use:
-* The `useBrowserCallbackOrWarn` function to send a warning to the standard output when not running on a browser.
+* The `useBrowserCallbackOrWarn` function to send a warning to the error output when not running on a browser.
 * The `useBrowserCallbackOrThrow` function to throw an error when not running on a browser.
 
 ### The `useEffect` function

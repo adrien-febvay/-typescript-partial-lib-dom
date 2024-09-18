@@ -6,10 +6,10 @@ const windowMock = {} as typeof window;
 const windowMockFn = () => windowMock;
 const throwingFn = _.EnvironmentError.throwingFn.bind(null);
 const warningFn = _.EnvironmentError.warningFn.bind(null);
-let consoleWarnSpy: jest.SpyInstance<void, Parameters<Console['warn']>, unknown>;
+let consoleErrorSpy: jest.SpyInstance<void, Parameters<Console['error']>, unknown>;
 
 beforeAll(() => {
-  consoleWarnSpy = jest.spyOn(console, 'warn');
+  consoleErrorSpy = jest.spyOn(console, 'error');
 });
 
 afterEach(() => {
@@ -26,7 +26,7 @@ describe('Check utils', () => {
 
   it('onBrowser alikes return fallback value', () => {
     jest.replaceProperty(global, 'window', void 0);
-    consoleWarnSpy.mockImplementation();
+    consoleErrorSpy.mockImplementation();
     expect(_.onBrowser(fn0)).toBe(void 0);
     expect(_.onBrowser(fn0, windowMock)).toBe(windowMock);
     expect(_.onBrowserOrWarn(fn0)).toBe(void 0);
@@ -35,10 +35,10 @@ describe('Check utils', () => {
 
   it('onBrowserOrWarn sends warning to console', () => {
     jest.replaceProperty(global, 'window', void 0);
-    consoleWarnSpy.mockImplementation();
+    consoleErrorSpy.mockImplementation();
     expect(_.onBrowserOrWarn(fn0)).toBe(void 0);
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-    expect(consoleWarnSpy).toHaveBeenLastCalledWith(expect.any(_.EnvironmentError));
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenLastCalledWith(expect.any(_.EnvironmentError));
   });
 
   it('onBrowserOrThrow throws', () => {
@@ -59,7 +59,7 @@ describe('Check utils', () => {
 
   it('browserFn alikes return fallback function', () => {
     jest.replaceProperty(global, 'window', void 0);
-    consoleWarnSpy.mockImplementation();
+    consoleErrorSpy.mockImplementation();
     const throwingFnSpy = jest.spyOn(_.EnvironmentError, 'throwingFn').mockImplementation(throwingFn);
     const warningFnSpy = jest.spyOn(_.EnvironmentError, 'warningFn').mockImplementation(warningFn);
     expect(_.browserFn(fn0).name).toBe('voidFn');
@@ -78,10 +78,10 @@ describe('Check utils', () => {
 
   it('browserFnOrWarn warning function sends warning', () => {
     jest.replaceProperty(global, 'window', void 0);
-    consoleWarnSpy.mockImplementation();
+    consoleErrorSpy.mockImplementation();
     expect(_.browserFnOrWarn(fn0)()).toBe(void 0);
-    expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
-    expect(consoleWarnSpy).toHaveBeenLastCalledWith(expect.any(_.EnvironmentError));
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenLastCalledWith(expect.any(_.EnvironmentError));
   });
 
   it('browserFnOrThrow throwing function throws', () => {
