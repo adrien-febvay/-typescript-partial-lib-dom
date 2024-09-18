@@ -1,3 +1,5 @@
+import type { AnyBrowserFn, BrowserFn, IfVoid, MergeReturnTypes, Shift, VoidOrUnionUndefined } from './types';
+
 import { EnvironmentError } from './EnvironmentError';
 
 export { EnvironmentError } from './EnvironmentError';
@@ -114,10 +116,9 @@ export function browserFn(fn: BrowserFn<unknown>, fallbackFn = voidFn) {
 }
 
 /**
- * Allows a function to be executed only on a browser (more accurately when `window` is defined)
- * and otherwise send a warning to the console.
+ * Allows a function to be executed only on a browser (more accurately when `window` is defined).
  *
- * Ideal to make callbacks.
+ * Sends a warning to the console when  the resulting function is called outside of a browser.
  *
  * @param fn A function to execute with `window` as its first parameter.
  * @param fallbackFn Function to use when not on browser, void function by default.
@@ -166,27 +167,3 @@ export function browserFnOrThrow<Fn extends AnyBrowserFn>(fn: Fn): (...args: Shi
 export function browserFnOrThrow(fn: BrowserFn<unknown>) {
   return window ? fn.bind(null, window) : EnvironmentError.throwingFn(fn);
 }
-
-/** Any function. */
-type AnyBrowserFn = (window: Window, ...args: any[]) => unknown;
-
-/** Broswer function, takes `window` as parameter. */
-type BrowserFn<ReturnType> = (window: Window) => ReturnType;
-
-/** If `Type` is `void`, returns `Then`, otherwise returns `Else`. */
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-type IfVoid<Type, Then, Else> = Type extends void ? (Type extends undefined ? Else : Then) : Else;
-
-/** Merges return types. */
-type MergeReturnTypes<Value1, Value2> = IfVoid<
-  Value1,
-  VoidOrUnionUndefined<Value2>,
-  Value1 | IfVoid<Value2, undefined, Value2>
->;
-
-/** Returns `Input` array type without it first element. */
-type Shift<Input extends [Window, ...unknown[]]> = Input extends [Window, ...infer Rest] ? Rest : [];
-
-/** If `Type` is `void`, returns `void`, otherwise returns `Type | undefined` union. */
-type VoidOrUnionUndefined<Type> = IfVoid<Type, void, Type | undefined>;
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
