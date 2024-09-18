@@ -1,6 +1,6 @@
 # Dev
-- New utils for React
-- Warnings are issued in the error output instead of the standard output.
+- New utils for React: `useBrowserCallback` and `useEffect` hooks and alikes
+- Warnings are issued in the error output instead of the standard output
 
 # Version 1.0.1
 - Fixed type conflicts and function declarations in `lib.dom.d.ts`

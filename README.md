@@ -153,17 +153,22 @@ Alternatively, you may use:
 
 ## React utilities
 
-### The `useBrowserCallback` function
+### The `useBrowserCallback` hook
 
-`useBrowserCallback` is an improved version of React's `useCallback`.
+This package's `useBrowserCallback` hook is an improved version of React's `useCallback` hook.
 
 It will return a memoized version of the callback that only changes if one of the `deps` has changed.
 
 The resulting function will be only executed on a browser (more accurately when `window` is defined).
 
 ```ts
-const getScrollY = useBrowserCallback((window) => window.scrollY + y, [y]);
-const scrollYPlusOne = getScrollY(); // Number on browser, undefined otherwise.
+import { useBrowserCallback } from '@typescript/lib-dom/react';
+
+export default function MyComponent() {
+  const getScrollY = useBrowserCallback((window) => window.scrollY + y, [y]);
+  const scrollYPlusOne = getScrollY(); // Number on browser, undefined otherwise.
+  ...
+}
 ```
 
 Syntax: `useBrowserCallback(fn[, fallbackFn], deps)`<br>
@@ -178,21 +183,26 @@ Alternatively, you may use:
 * The `useBrowserCallbackOrWarn` function to send a warning to the error output when not running on a browser.
 * The `useBrowserCallbackOrThrow` function to throw an error when not running on a browser.
 
-### The `useEffect` function
+### The `useEffect` hook
 
-This package's `useEffect` is an improved version of React's one.
+This package's `useEffect` hook is an improved version of React's one.
 
 The only difference is that the effect and destruction callbacks will be provided with the `window` object,
 which is always defined in this situation because it will only be called on a browser, as their argument.
 
 ```ts
-// Here `document` is always defined.
-useEffect(({ document }) => {
-  document.addEventListener('click', myCallback);
-  return () => {
-    document.removeEventListener('click', myCallback);
-  };
-});
+import { useEffect } from '@typescript/lib-dom/react';
+
+export default function MyComponent() {
+  // Here `document` is always defined.
+  useEffect(({ document }) => {
+    document.addEventListener('click', myCallback);
+    return () => {
+      document.removeEventListener('click', myCallback);
+    };
+  });
+  ...
+}
 ```
 
 Syntax: `useEffect(effect[, deps])`<br>
