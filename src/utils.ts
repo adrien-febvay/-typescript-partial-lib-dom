@@ -33,6 +33,30 @@ export function onBrowser(fn: BrowserFn<unknown>, fallbackValue?: unknown) {
 }
 
 /**
+ * Executes a function when on a browser, but otherwise throws an `EnvironmentError`.
+ *
+ * Good way to wrap code and get a clean return type, but may cause crashes if not used properly.
+ *
+ * @param fn Function to execute, with `window` as parameter.
+ * @returns On a browser, the function result, otherwise throws.
+ * @example
+ * ```
+ *   // Number on browser, otherwise throws.
+ *   const scrollY = onBrowserOrThrow(({ scrollY }) => scrollY);
+ *
+ *   // Can only return a number.
+ *   const getScrollY = onBrowserOrThrow(({ scrollY }) => () => scrollY);
+ * ```
+ */
+export function onBrowserOrThrow<ReturnType>(fn: BrowserFn<ReturnType>): ReturnType {
+  if (window) {
+    return fn(window);
+  } else {
+    throw new EnvironmentError(fn);
+  }
+}
+
+/**
  * Executes a function when on a browser (more accurately when `window` is defined).
  *
  * Useful when code has many expressions using DOM global variables, to avoid coalescing operators and optional chainings everywhere.
@@ -59,30 +83,6 @@ export function onBrowserOrWarn(fn: BrowserFn<unknown>, fallbackValue?: unknown)
     console.warn(new EnvironmentError(fn));
   }
   return window ? fn(window) : fallbackValue;
-}
-
-/**
- * Executes a function when on a browser, but otherwise throws an `EnvironmentError`.
- *
- * Good way to wrap code and get a clean return type, but may cause crashes if not used properly.
- *
- * @param fn Function to execute, with `window` as parameter.
- * @returns On a browser, the function result, otherwise throws.
- * @example
- * ```
- *   // Number on browser, otherwise throws.
- *   const scrollY = onBrowserOrThrow(({ scrollY }) => scrollY);
- *
- *   // Can only return a number.
- *   const getScrollY = onBrowserOrThrow(({ scrollY }) => () => scrollY);
- * ```
- */
-export function onBrowserOrThrow<ReturnType>(fn: BrowserFn<ReturnType>): ReturnType {
-  if (window) {
-    return fn(window);
-  } else {
-    throw new EnvironmentError(fn);
-  }
 }
 
 /**
@@ -116,6 +116,28 @@ export function browserFn(fn: BrowserFn<unknown>, fallbackFn = voidFn) {
 }
 
 /**
+ * Allows a function to be executed on a browser (more accurately when `window` is defined).
+ *
+ * Throws an `EnvironmentError` when the resulting function is called outside of a browser.
+ *
+ * @param fn A function to execute with `window` as its first parameter.
+ * @returns A function accordingly.
+ * @example
+ * ```
+ *   const getScrollY = browserFnOrThrow((window, y = 0) => window.scrollY + y);
+ *   const scrollYPlusOne = getScrollY(1); // Number on browser, throws otherwise.
+ *
+ *   // Here then callback will be executed upon promise resolution on a browser,
+ *   // but otherwise will throw and thus cause a rejection.
+ *   myPromise.then(browserFnOrThrow(myCallback));
+ * ```
+ */
+export function browserFnOrThrow<Fn extends AnyBrowserFn>(fn: Fn): (...args: Shift<Parameters<Fn>>) => ReturnType<Fn>;
+export function browserFnOrThrow(fn: BrowserFn<unknown>) {
+  return window ? fn.bind(null, window) : EnvironmentError.throwingFn(fn);
+}
+
+/**
  * Allows a function to be executed only on a browser (more accurately when `window` is defined).
  *
  * Sends a warning to the console when  the resulting function is called outside of a browser.
@@ -144,26 +166,4 @@ export function browserFnOrWarn<Fn extends AnyBrowserFn, FallbackReturnType>(
 
 export function browserFnOrWarn(fn: BrowserFn<unknown>, fallbackFn = voidFn) {
   return window ? fn.bind(null, window) : EnvironmentError.warningFn(fn, fallbackFn);
-}
-
-/**
- * Allows a function to be executed on a browser (more accurately when `window` is defined).
- *
- * Throws an `EnvironmentError` when the resulting function is called outside of a browser.
- *
- * @param fn A function to execute with `window` as its first parameter.
- * @returns A function accordingly.
- * @example
- * ```
- *   const getScrollY = browserFnOrThrow((window, y = 0) => window.scrollY + y);
- *   const scrollYPlusOne = getScrollY(1); // Number on browser, throws otherwise.
- *
- *   // Here then callback will be executed upon promise resolution on a browser,
- *   // but otherwise will throw and thus cause a rejection.
- *   myPromise.then(browserFnOrThrow(myCallback));
- * ```
- */
-export function browserFnOrThrow<Fn extends AnyBrowserFn>(fn: Fn): (...args: Shift<Parameters<Fn>>) => ReturnType<Fn>;
-export function browserFnOrThrow(fn: BrowserFn<unknown>) {
-  return window ? fn.bind(null, window) : EnvironmentError.throwingFn(fn);
 }
