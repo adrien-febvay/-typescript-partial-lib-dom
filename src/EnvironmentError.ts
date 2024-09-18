@@ -1,5 +1,4 @@
-type AnyFn = (...args: unknown[]) => unknown;
-type AnyBrowserFn = (window: Window, ...args: unknown[]) => unknown;
+import type { AnyBrowserFn, AnyFn } from './types';
 
 /** Thrown by `strictlyOnBrowser` when called outside of a browser. */
 export class EnvironmentError extends Error {

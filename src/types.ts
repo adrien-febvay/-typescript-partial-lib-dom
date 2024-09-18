@@ -1,5 +1,8 @@
-/** Any function. */
+/** Any browser function. */
 export type AnyBrowserFn = (window: Window, ...args: any[]) => unknown;
+
+/** Any function. */
+export type AnyFn = (...args: unknown[]) => unknown;
 
 /** Broswer function, takes `window` as parameter. */
 export type BrowserFn<ReturnType> = (window: Window) => ReturnType;
