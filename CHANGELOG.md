@@ -1,4 +1,4 @@
-# Dev
+# Version 1.1.0
 - New utils for React: `useBrowserCallback` and `useEffect` hooks and alikes
 - Warnings are issued in the error output instead of the standard output
 
