@@ -76,7 +76,7 @@
     "@types/jest": "^29.5.13",
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.7",
-    "@typescript-eslint/eslint-plugin": "^8.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
     "@typescript/lib-dom": "file:.",
     "changelog-safeguard": "^1.0.1",
